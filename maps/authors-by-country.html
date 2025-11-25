@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Authors by Country</title>
+    <link rel="icon" type="image/svg" href="../img/g2k_det_log.svg">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #0d1117;
+            color: #c9d1d9;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('../img/g2k_swords.svg');
+            background-repeat: no-repeat;
+            background-position: center;
+            background-size: cover;
+            opacity: 0.025;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        /* Header */
+        header {
+            background-color: #161b22;
+            border-bottom: 1px solid #30363d;
+            padding: 16px 32px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-container img {
+            height: 40px;
+            width: auto;
+        }
+
+        .img-logo {
+            height: 200px;
+            width: auto;
+        }
+
+        /* Navigation */
+        nav {
+            display: flex;
+            gap: 8px;
+        }
+
+        .nav-item {
+            position: relative;
+        }
+
+        .nav-button {
+            background: none;
+            border: none;
+            color: #c9d1d9;
+            padding: 8px 16px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            border-radius: 6px;
+            transition: background-color 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .nav-button:hover {
+            background-color: #30363d;
+        }
+
+        .nav-button::after {
+            content: '▼';
+            font-size: 10px;
+            margin-left: 4px;
+        }
+
+        /* Dropdown */
+        .dropdown {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background-color: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 6px;
+            margin-top: 8px;
+            min-width: 200px;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.2s;
+            box-shadow: 0 8px 24px rgba(1, 4, 9, 0.5);
+            z-index: 1000;
+        }
+
+        .nav-item:hover .dropdown {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .dropdown a {
+            display: block;
+            padding: 12px 16px;
+            color: #c9d1d9;
+            text-decoration: none;
+            font-size: 14px;
+            transition: background-color 0.2s;
+        }
+
+        .dropdown a:first-child {
+            border-radius: 6px 6px 0 0;
+        }
+
+        .dropdown a:last-child {
+            border-radius: 0 0 6px 6px;
+        }
+
+        .dropdown a:hover {
+            background-color: #6da1b4;
+        }
+
+        /* Main Content */
+        main {
+            flex: 1;
+            padding: 48px 32px;
+            max-width: 1450px;
+            width: 100%;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        .page-logo {
+            height: 200px;
+            width: auto;
+            margin-bottom: 24px;
+        }
+
+        .content-header {
+            margin-bottom: 32px;
+        }
+
+        .content-header h1 {
+            font-size: 32px;
+            font-weight: 600;
+            color: #f0f6fc;
+            margin-bottom: 8px;
+        }
+
+        .content-header p {
+            font-size: 16px;
+            color: #8b949e;
+            line-height: 1.6;
+        }
+
+        /* Text Section */
+        .text-section {
+            max-width: 1000px;
+            margin-bottom: 32px;
+        }
+
+        .text-section p {
+            font-size: 16px;
+            line-height: 1.6;
+            color: #c9d1d9;
+            margin-bottom: 16px;
+        }
+
+        .text-section a {
+            color: #58a6ff;
+            text-decoration: none;
+        }
+
+        .text-section a:hover {
+            text-decoration: underline;
+        }
+
+        /* Content Card */
+        .content-card {
+            background-color: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 6px;
+            padding: 32px;
+            margin-bottom: 32px;
+        }
+
+        .content-card h2 {
+            font-size: 24px;
+            font-weight: 600;
+            color: #f0f6fc;
+            margin-bottom: 16px;
+        }
+
+        .content-card h3 {
+            font-size: 18px;
+            font-weight: 600;
+            color: #f0f6fc;
+            margin-top: 24px;
+            margin-bottom: 12px;
+        }
+
+        .content-card p {
+            font-size: 16px;
+            line-height: 1.6;
+            color: #c9d1d9;
+            margin-bottom: 16px;
+        }
+
+        .content-card ul, .content-card ol {
+            margin-left: 24px;
+            margin-bottom: 16px;
+        }
+
+        .content-card li {
+            font-size: 16px;
+            line-height: 1.6;
+            color: #c9d1d9;
+            margin-bottom: 8px;
+        }
+
+        .content-card a {
+            color: #58a6ff;
+            text-decoration: none;
+        }
+
+        .content-card a:hover {
+            text-decoration: underline;
+        }
+
+        /* Code Blocks */
+        .code-block {
+            background-color: #0d1117;
+            border: 1px solid #30363d;
+            border-radius: 6px;
+            padding: 16px;
+            margin: 16px 0;
+            overflow-x: auto;
+        }
+
+        .code-block code {
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 14px;
+            color: #c9d1d9;
+            line-height: 1.5;
+        }
+
+        /* Inline Code */
+        code {
+            background-color: #0d1117;
+            color: #79c0ff;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 14px;
+        }
+
+        /* Visualization Container - matches index.html */
+        .visualization-container {
+            background-color: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 6px;
+            padding: 0;
+            height: 800px;
+            overflow: hidden;
+            position: relative;
+            margin-bottom: 32px;
+        }
+        
+        /* Iframe Control Buttons */
+        .iframe-controls {
+            position: absolute;
+            top: 20px;
+            right: 490px;
+            z-index: 10;
+        }
+
+        .iframe-dropdown {
+            background-color: #21262d;
+            border: 1px solid #30363d;
+            color: #c9d1d9;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23c9d1d9' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 8px center;
+            padding-right: 32px;
+            min-width: 150px;
+        }
+
+        .iframe-dropdown:hover {
+            background-color: #30363d;
+        }
+
+        .fullscreen-btn {
+            position: absolute;
+            top: 20px;
+            right: 375px;
+            background-color: #21262d;
+            border: 1px solid #30363d;
+            color: #c9d1d9;
+            padding: 8px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            z-index: 10;
+            transition: background-color 0.2s;
+        }
+
+        .fullscreen-btn:hover {
+            background-color: #30363d;
+        }
+
+        .visualization-container:fullscreen {
+            padding: 0;
+            height: 100vh;
+        }
+
+        .visualization-container:fullscreen iframe {
+            height: 100vh;
+        }
+
+        /* Footer */
+        footer {
+            background-color: #161b22;
+            border-top: 1px solid #30363d;
+            padding: 24px 32px;
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .footer-content {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 24px;
+        }
+
+        .footer-logo {
+            height: 40px;
+            width: auto;
+        }
+
+        footer a {
+            color: #58a6ff;
+            text-decoration: none;
+            font-size: 14px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: color 0.2s;
+        }
+
+        footer a:hover {
+            color: #79c0ff;
+            text-decoration: underline;
+        }
+
+        .github-icon {
+            width: 20px;
+            height: 20px;
+            fill: currentColor;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo-container">
+            <a href="./index.html">
+                <img src="./img/g2k_txt_log.svg" alt="Logo">
+            </a>
+        </div>
+        
+        <nav>
+            <div class="nav-item">
+                <button class="nav-button">Maps</button>
+                <div class="dropdown">
+                    <a href="./authors-by-country.html">Authors (country)</a>
+                    <a href="./authors-by-genre.html">Authors (genre) </a>
+                    <a href="./books-by-country-and-time.html">Books (country/time) </a>
+                </div>
+            </div>
+
+            <div class="nav-item">
+                <button class="nav-button">Graphs</button>
+                <div class="dropdown">
+                    <a href="../graphs/individual-authors.html">Individual Authors</a>
+                    <a href="../graphs/individual-books.html">Individual Books</a>
+                    <a href="../graphs/authors-by-genre.html">Authors by Genre</a>
+                    <a href="../graphs/books-by-genre.html">Books by Genre</a>
+                </div>
+            </div>
+
+            <div class="nav-item">
+                <button class="nav-button">Articles</button>
+                <div class="dropdown">
+                    <a href="../articles/genre-gender-splits.html"><i>"Which genres are majority male/female?"</i></a>
+                </div>
+            </div>
+
+            <div class="nav-item">
+                <button class="nav-button">Info</button>
+                <div class="dropdown">
+                    <a href="../info/about.html">About</a>
+                    <a href="../info/methods.html">Methods</a>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <img src="../img/g2k_pro_log.svg" alt="Logo" class="img-logo">
+        
+        <!-- Title Section -->
+        <div class="content-header">
+            <h1>Authors by Country</h1>
+            <p>Authors from a handful of the largest countries.</p>
+        </div>
+        
+        <!-- Optional: Text section (remove if not needed) -->
+        <div class="text-section">
+            <p>
+                Below are a number of maps of authors from some of the largest countries. Cutoffs for inclusion in the visualization were made based 
+                on the number of ratings that an author recieved on Goodreads. Most countries have the cutoff at at least 1000 ratings, while Japan and
+                China have the cutoff at 500 ratings. Positions will not be exact, as random jittering was added so authors with identical birth places
+                wouldn't overlap.
+            </p>
+        </div>
+        
+        <!-- Visualization Container (remove if not needed) -->
+        <div class="visualization-container" id="vizContainer">
+            <!-- Iframe control buttons -->
+            <div class="iframe-controls">
+                <select class="iframe-dropdown" onchange="changeIframe(this.value)">
+                    <option value="../kplr/maps/country/pnd_ct_US.html">U.S.A.</option>
+                    <option value="../kplr/maps/country/pnd_ct_UK.html">U.K.</option>
+                    <option value="../kplr/maps/country/pnd_ct_FR.html">France</option>
+                    <option value="../kplr/maps/country/pnd_ct_DE.html">Germany</option>
+                    <option value="../kplr/maps/country/pnd_ct_JP.html">Japan</option>
+                    <option value="../kplr/maps/country/pnd_ct_CN.html">China</option>
+                </select>
+            </div>
+            
+            <!-- Fullscreen button -->
+            <button class="fullscreen-btn" onclick="toggleFullscreen()">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                    <path d="M1.5 1a.5.5 0 0 0-.5.5v4a.5.5 0 0 1-1 0v-4A1.5 1.5 0 0 1 1.5 0h4a.5.5 0 0 1 0 1h-4zM10 .5a.5.5 0 0 1 .5-.5h4A1.5 1.5 0 0 1 16 1.5v4a.5.5 0 0 1-1 0v-4a.5.5 0 0 0-.5-.5h-4a.5.5 0 0 1-.5-.5zM.5 10a.5.5 0 0 1 .5.5v4a.5.5 0 0 0 .5.5h4a.5.5 0 0 1 0 1h-4A1.5 1.5 0 0 1 0 14.5v-4a.5.5 0 0 1 .5-.5zm15 0a.5.5 0 0 1 .5.5v4a1.5 1.5 0 0 1-1.5 1.5h-4a.5.5 0 0 1 0-1h4a.5.5 0 0 0 .5-.5v-4a.5.5 0 0 1 .5-.5z"/>
+                </svg>
+                Fullscreen
+            </button>
+            
+            <iframe id="mainIframe" src="../kplr/maps/country/pnd_ct_US.html" title="Visualization" style="width: 100%; height: 100%; border: none; display: block;"></iframe>
+        </div>
+
+        <!-- Optional: Additional text after visualization -->
+        <div class="text-section">
+            <p><b>source</b>: <i>(mostly) Goodreads</i></p>
+        </div>
+            
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <img src="../img/g2k_det_log.svg" alt="Logo" class="footer-logo">
+            <a href="https://github.com/rhawrami/guide2kulchur" target="_blank" rel="noopener noreferrer">
+                <svg class="github-icon" viewBox="0 0 16 16" version="1.1" aria-hidden="true">
+                    <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"></path>
+                </svg>
+                Repository
+            </a>
+        </div>
+    </footer>
+
+    <script>
+        function toggleFullscreen() {
+            const container = document.getElementById('vizContainer');
+            if (!document.fullscreenElement) {
+                container.requestFullscreen().catch(err => {
+                    console.error('Error attempting to enable fullscreen:', err);
+                });
+            } else {
+                document.exitFullscreen();
+            }
+        }
+
+        function changeIframe(url) {
+            // Change the iframe source
+            document.getElementById('mainIframe').src = url;
+        }
+    </script>
+</body>
+</html>
