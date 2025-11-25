@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Methods</title>
+    <link rel="icon" type="image/svg" href="../img/g2k_det_log.svg">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #0d1117;
+            color: #c9d1d9;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('../img/g2k_skull.svg');
+            background-repeat: no-repeat;
+            background-position: center;
+            background-size: cover;
+            opacity: 0.025;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        /* Header */
+        header {
+            background-color: #161b22;
+            border-bottom: 1px solid #30363d;
+            padding: 16px 32px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-container img {
+            height: 40px;
+            width: auto;
+        }
+
+        .img-logo {
+            height: 200px;
+            width: auto;
+        }
+
+        /* Navigation */
+        nav {
+            display: flex;
+            gap: 8px;
+        }
+
+        .nav-item {
+            position: relative;
+        }
+
+        .nav-button {
+            background: none;
+            border: none;
+            color: #c9d1d9;
+            padding: 8px 16px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            border-radius: 6px;
+            transition: background-color 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .nav-button:hover {
+            background-color: #30363d;
+        }
+
+        .nav-button::after {
+            content: '▼';
+            font-size: 10px;
+            margin-left: 4px;
+        }
+
+        /* Dropdown */
+        .dropdown {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background-color: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 6px;
+            margin-top: 8px;
+            min-width: 200px;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.2s;
+            box-shadow: 0 8px 24px rgba(1, 4, 9, 0.5);
+            z-index: 1000;
+        }
+
+        .nav-item:hover .dropdown {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .dropdown a {
+            display: block;
+            padding: 12px 16px;
+            color: #c9d1d9;
+            text-decoration: none;
+            font-size: 14px;
+            transition: background-color 0.2s;
+        }
+
+        .dropdown a:first-child {
+            border-radius: 6px 6px 0 0;
+        }
+
+        .dropdown a:last-child {
+            border-radius: 0 0 6px 6px;
+        }
+
+        .dropdown a:hover {
+            background-color: #6da1b4;
+        }
+
+        /* Main Content */
+        main {
+            flex: 1;
+            padding: 48px 32px;
+            max-width: 1300px;
+            width: 100%;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        .page-logo {
+            height: 200px;
+            width: auto;
+            margin-bottom: 24px;
+        }
+
+        .content-header {
+            margin-bottom: 32px;
+        }
+
+        .content-header h1 {
+            font-size: 32px;
+            font-weight: 600;
+            color: #f0f6fc;
+            margin-bottom: 8px;
+        }
+
+        .content-header p {
+            font-size: 16px;
+            color: #8b949e;
+            line-height: 1.6;
+        }
+
+        /* Text Section */
+        .text-section {
+            max-width: 1000px;
+            margin-bottom: 32px;
+        }
+
+        .text-section p {
+            font-size: 16px;
+            line-height: 1.6;
+            color: #c9d1d9;
+            margin-bottom: 16px;
+        }
+
+        .text-section a {
+            color: #58a6ff;
+            text-decoration: none;
+        }
+
+        .text-section a:hover {
+            text-decoration: underline;
+        }
+
+        /* Content Card */
+        .content-card {
+            background-color: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 6px;
+            padding: 32px;
+            margin-bottom: 32px;
+        }
+
+        .content-card h2 {
+            font-size: 24px;
+            font-weight: 600;
+            color: #f0f6fc;
+            margin-bottom: 16px;
+        }
+
+        .content-card h3 {
+            font-size: 18px;
+            font-weight: 600;
+            color: #f0f6fc;
+            margin-top: 24px;
+            margin-bottom: 12px;
+        }
+
+        .content-card p {
+            font-size: 16px;
+            line-height: 1.6;
+            color: #c9d1d9;
+            margin-bottom: 16px;
+        }
+
+        .content-card ul, .content-card ol {
+            margin-left: 24px;
+            margin-bottom: 16px;
+        }
+
+        .content-card li {
+            font-size: 16px;
+            line-height: 1.6;
+            color: #c9d1d9;
+            margin-bottom: 8px;
+        }
+
+        .content-card a {
+            color: #58a6ff;
+            text-decoration: none;
+        }
+
+        .content-card a:hover {
+            text-decoration: underline;
+        }
+
+        /* Code Blocks */
+        .code-block {
+            background-color: #0d1117;
+            border: 1px solid #30363d;
+            border-radius: 6px;
+            padding: 16px;
+            margin: 16px 0;
+            overflow-x: auto;
+        }
+
+        .code-block code {
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 14px;
+            color: #c9d1d9;
+            line-height: 1.5;
+        }
+
+        /* Inline Code */
+        code {
+            background-color: #0d1117;
+            color: #79c0ff;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 14px;
+        }
+
+        /* Visualization Container - matches index.html */
+        .visualization-container {
+            background-color: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 6px;
+            padding: 0;
+            height: 800px;
+            overflow: hidden;
+            position: relative;
+            margin-bottom: 32px;
+        }
+        
+        /* Iframe Control Buttons */
+        .iframe-controls {
+            position: absolute;
+            top: 20px;
+            right: 490px;
+            z-index: 10;
+        }
+
+        .iframe-dropdown {
+            background-color: #21262d;
+            border: 1px solid #30363d;
+            color: #c9d1d9;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23c9d1d9' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 8px center;
+            padding-right: 32px;
+            min-width: 150px;
+        }
+
+        .iframe-dropdown:hover {
+            background-color: #30363d;
+        }
+
+        .fullscreen-btn {
+            position: absolute;
+            top: 20px;
+            right: 375px;
+            background-color: #21262d;
+            border: 1px solid #30363d;
+            color: #c9d1d9;
+            padding: 8px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            z-index: 10;
+            transition: background-color 0.2s;
+        }
+
+        .fullscreen-btn:hover {
+            background-color: #30363d;
+        }
+
+        .visualization-container:fullscreen {
+            padding: 0;
+            height: 100vh;
+        }
+
+        .visualization-container:fullscreen iframe {
+            height: 100vh;
+        }
+
+        /* Footer */
+        footer {
+            background-color: #161b22;
+            border-top: 1px solid #30363d;
+            padding: 24px 32px;
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .footer-content {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 24px;
+        }
+
+        .footer-logo {
+            height: 40px;
+            width: auto;
+        }
+
+        footer a {
+            color: #58a6ff;
+            text-decoration: none;
+            font-size: 14px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: color 0.2s;
+        }
+
+        footer a:hover {
+            color: #79c0ff;
+            text-decoration: underline;
+        }
+
+        .github-icon {
+            width: 20px;
+            height: 20px;
+            fill: currentColor;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo-container">
+            <a href="../index.html">
+                <img src="../img/g2k_txt_log.svg" alt="Logo">
+            </a>
+        </div>
+        
+        <nav>
+            <div class="nav-item">
+                <button class="nav-button">Maps</button>
+                <div class="dropdown">
+                    <a href="../maps/authors-by-country.html">Authors (country)</a>
+                    <a href="../maps/authors-by-genre.html">Authors (genre) </a>
+                    <a href="../maps/books-by-country-and-time.html">Books (country/time) </a>
+                </div>
+            </div>
+
+            <div class="nav-item">
+                <button class="nav-button">Graphs</button>
+                <div class="dropdown">
+                    <a href="../graphs/individual-authors.html">Individual Authors</a>
+                    <a href="../graphs/individual-books.html">Individual Books</a>
+                    <a href="../graphs/authors-by-genre.html">Authors by Genre</a>
+                    <a href="../graphs/books-by-genre.html">Books by Genre</a>
+                </div>
+            </div>
+
+            <div class="nav-item">
+                <button class="nav-button">Articles</button>
+                <div class="dropdown">
+                    <a href="../articles/genre-gender-splits.html"><i>"Which genres are majority male/female?"</i></a>
+                </div>
+            </div>
+
+            <div class="nav-item">
+                <button class="nav-button">Info</button>
+                <div class="dropdown">
+                    <a href="./about.html">About</a>
+                    <a href="./methods.html">Methods</a>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <img src="../img/g2k_cln.svg" alt="Logo" class="img-logo">
+        
+        <!-- Title Section -->
+        <div class="content-header">
+            <h1>Methods</h1>
+            <p>Sources, Transformations, Limitations</p>
+        </div>
+
+
+        <div class="content-card">
+            <h2>Data Sources</h2>
+            <h3>Goodreads</h3>
+            <p>
+                The majority of the visualizations use data publicly available from <a href="https://www.goodreads.com/" target="_blank" rel="noopener noreferrer">Goodreads</a>. 
+                Goodreads has a large number of attributes for each book and author on their site. Specifically, the following fields are shown in the visualizations:
+                <ul>
+                    <li>Title of book / Author name</li>
+                    <li>Date book first published / Author's birth date</li>
+                    <li>Description of the book/author posted on Goodreads</li>
+                    <li>Author's place of birth</li>
+                    <li>Average Goodreads user rating</li>
+                    <li>Number of Goodreads user ratings given</li>
+                    <li>The "top genres" of a book/author</li>
+                    <li>The works of an author</li>
+                    <li>The image of an author/book located on the their respective Goodreads page</li>
+                    <li>Books/authors that are "similar" to a given book/author</li>
+                </ul>
+
+                The "Similar" field warrants further discussion. This field isn't necessarily the authors/books most similar to a given/author book. More
+                specifically, the language used is the following: 
+                
+                <ul>
+                    <li>"Readers who enjoyed book X also enjoyed book Y."</li>
+                    <li>"Members who read books by author X also read books by author Y."</li>
+                </ul>
+                
+                Rather than "similar" implying similarity in content or style, "similar" here means similarity in readership. While there'll be some correlation
+                with content and/or style, it's important to clarify this, as you may be confused when you see in the <a href="../graphs/individual-authors.html">individual author networks</a>
+                that Plato is "similar" to Ernest Hemingway and Rick Rubin. This definition of "similar" still provides a meaningful data source to study author relationships,
+                specifically in studying their modern readerships and their reading behavior.
+            </p>
+            
+            <h3>Nominatim</h3>
+            <p>
+                In order to make map visualizations, <a href="https://nominatim.org/" target="_blank" rel="noopener noreferrer">Nominatim</a>
+                was used to find the coordinates of an author's place of birth. This process is not perfect of course, as author birthplace strings are often
+                either incomplete in scope (e.g., "Buffalo"), too broad to generate specific coordinates (e.g., "United States of America"), or could return results
+                from an entirely different location due to the string (e.g., "Georgia"). Despite these limitations, this service allowed for author and book maps with a broad
+                range of authors and books, both in relation to time and geography.
+            </p>
+            
+            <h3>Wikidata</h3>
+            <p>
+                Unfortunately, a large number of older authors did not have birth dates on record in Goodreads; further, a programming error caused authors with BC era birthdates
+                to be coded as having unavailable birthdates. To partially alleviate these issues, <a href="https://www.wikidata.org/wiki/Wikidata:Main_Page/" target="_blank" rel="noopener noreferrer">Wikidata</a>
+                was used to find the birthdates and birth places for a number of older authors, like Hesiod and Homer. This process was also not perfect, as joins were made
+                on an author's name, which could incorrectly match an author from Goodreads to an author in the Wikidata database.
+            </p>
+        </div>
+
+        <div class="content-card">
+            <h2>
+                Visualizations
+            </h2>
+            
+            <h3>kepler.gl</h3>
+            <p>
+                For all map visualizations, <a href="https://www.wikidata.org/wiki/Wikidata:Main_Page/" target="_blank" rel="noopener noreferrer">kepler.gl</a>, 
+                a <a href="https://www.wikidata.org/wiki/Wikidata:Main_Page/" target="_blank" rel="noopener noreferrer">"data-agnostic, high-performance web-based application for visual exploration of large-scale geolocation data sets"</a>
+                made by Uber, was used. This open source application was very easy to work with, and its high-performance backend allowed for a large number of markers
+                and marker data displayed on a single map. I'd recommend it to others, and will definitely use it again in the future on other projects.
+            </p>
+
+            <h3>ipysigma</h3>
+            <p>
+                <a href="https://github.com/medialab/ipysigma" target="_blank" rel="noopener noreferrer">ipysigma</a>, a Jupyter widget made by 
+                <a href="https://github.com/medialab" target="_blank" rel="noopener noreferrer">médialab Sciences Po</a> that uses
+                <a href="https://www.sigmajs.org/" target="_blank" rel="noopener noreferrer">sigma.js</a> and
+                <a href="https://graphology.github.io/" target="_blank" rel="noopener noreferrer">graphology</a> under the hood, was used to make graphs of author and
+                book networks. Again, I'd definitely recommend this tool and will be using it again.
+            </p>
+        </div>
+
+        <div class="content-card">
+            <h2>
+                Limitations
+            </h2>
+            <p>
+                While a number of limitations have already been mentioned, I'll mention a few more here:
+                <ul>
+                    <li>Given that the pool of authors and books is taken from Goodreads, and that many visualizations use an author/book's rating count to filter out 
+                        some of the data, we'll be lacking in authors/books that aren't as interacted with on Goodreads, or are simply lacking fields that we rely on, like
+                        birth place or publication date. Unfortunately (for me at least), this means that many of the older authors and books will not be included in the
+                        visualizations.
+                    </li>
+                    <li>
+                        Aside from Goodreads "native" data, like average ratings and number of ratings given, things like an author's birth place, or a book's publication date
+                        have the possibility of being incorrect, particularly for older authors and books. Coupled with the point above, since we don't have that much of the older
+                        book/author data, this isn't a huge concern, but it's still there. 
+                    </li>
+                </ul>
+            </p>
+        </div>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <img src="../img/g2k_det_log.svg" alt="Logo" class="footer-logo">
+            <a href="https://github.com/rhawrami/guide2kulchur/guide2kulchur" target="_blank" rel="noopener noreferrer">
+                <svg class="github-icon" viewBox="0 0 16 16" version="1.1" aria-hidden="true">
+                    <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"></path>
+                </svg>
+                Repository
+            </a>
+        </div>
+    </footer>
+
+    <script>
+        function toggleFullscreen() {
+            const container = document.getElementById('vizContainer');
+            if (!document.fullscreenElement) {
+                container.requestFullscreen().catch(err => {
+                    console.error('Error attempting to enable fullscreen:', err);
+                });
+            } else {
+                document.exitFullscreen();
+            }
+        }
+
+        function changeIframe(url) {
+            // Change the iframe source
+            document.getElementById('mainIframe').src = url;
+        }
+    </script>
+</body>
+</html>
